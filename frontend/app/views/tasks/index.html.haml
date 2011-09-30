@@ -1,0 +1,14 @@
+%h2 Listing tasks
+
+%table
+  %tr
+    %th Id
+    %th Name
+    %th Priority
+  - @tasks.each do |task|
+    %tr
+      %td= task.id
+      %td= link_to task.name, task_path(task)
+      %td= task.priority
+
+= link_to "Create new task", new_task_path, :class => "btn success"

@@ -4,3 +4,7 @@ gem 'rails', '3.1.1.rc1'
 gem 'haml'
 gem 'inherited_resources', '1.2.2'
 gem 'simple_form', '1.4.1'
+
+group :development do
+  gem "awesome_print"
+end

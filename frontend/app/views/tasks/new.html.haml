@@ -1,0 +1,10 @@
+%h2 Create new task
+
+= simple_form_for @task do |f|
+  %fieldset
+    = f.input :name
+    = f.input :priority
+    = f.input :content, :as => :text
+  .actions
+    = f.submit "Create", :class => "btn primary"
+    = link_to "Cancel", tasks_path, :class => "btn"
