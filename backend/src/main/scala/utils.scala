@@ -8,11 +8,23 @@ import net.liftweb.json._
 import net.liftweb.json.JsonDSL._
 import net.liftweb.json.scalaz._
 import net.liftweb.json.scalaz.JsonScalaz._
+import Validation.Monad._
 
 package object rest {
     implicit def defaultFieldValue[A](default: A) = new {
         def <~(f: JValue => Result[A]): JValue => Result[A] = json => (f(json) | default).success
     }
+
+    // Validations
+    def notBlank(field: String)(v: String) = if(v.trim.isEmpty) Fail(field, "is blank") else v.success
+
+    def min(x: Int)(field: String)(y: Int) = if (y < x) Fail(field, "must be greater or equal than %d" format x) else y.success
+
+    def max(x: Int)(field: String)(y: Int) = if (y > x) Fail(field, "must be less or equal than %d" format x) else y.success
+
+    def valid[T: JSONR](name: String, fs: (String => T => Result[T])*) = (validate[T](name) /: fs)(_ >=> _(name))
+
+
 
     implicit object NonEmptyListErrorJSON extends JSONW[NonEmptyList[JsonScalaz.Error]] {
         def errorMsg(error: JsonScalaz.Error) = error match {

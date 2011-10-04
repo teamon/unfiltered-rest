@@ -10,7 +10,6 @@ import net.liftweb.json._
 import net.liftweb.json.JsonDSL._
 import net.liftweb.json.scalaz._
 import net.liftweb.json.scalaz.JsonScalaz._
-import Validation.Monad._
 
 // Data model
 case class Task(id: Int, name: String, content: String, priority: Int) extends Persistent[Task]{
@@ -22,15 +21,6 @@ class TasksPlan extends Plan {
 
     implicit def TaskJSON = new JSON[Task] {
         def write(task: Task) = ("id" -> task.id) ~ ("name" -> task.name) ~ ("content" -> task.content) ~ ("priority" -> task.priority)
-
-        def notBlank(field: String)(v: String) = if(v.trim.isEmpty) Fail(field, "is blank") else v.success
-
-        def min(x: Int)(field: String)(y: Int) = if (y < x) Fail(field, "must be greater or equal than %d" format x) else y.success
-
-        def max(x: Int)(field: String)(y: Int) = if (y > x) Fail(field, "must be less or equal than %d" format x) else y.success
-
-        def valid[T: JSONR](name: String, fs: (String => T => Result[T])*) = (validate[T](name) /: fs)(_ >=> _(name))
-
         def read(json: JValue) = Task.applyJSON(0 <~ field("id"), valid("name", notBlank), field("content"), valid("priority", min(1), max(10)))(json \ "task")
     }
 
