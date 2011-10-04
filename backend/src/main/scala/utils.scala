@@ -10,7 +10,7 @@ import net.liftweb.json.scalaz._
 import net.liftweb.json.scalaz.JsonScalaz._
 
 package object rest {
-    implicit def defaultFieldValue[A](default: A) = new       {
+    implicit def defaultFieldValue[A](default: A) = new {
         def <~(f: JValue => Result[A]): JValue => Result[A] = json => (f(json) | default).success
     }
 
@@ -18,7 +18,7 @@ package object rest {
         def errorMsg(error: JsonScalaz.Error) = error match {
             case UnexpectedJSONError(was, expected) => "Unexpected JSON error. Was " + was + ", expected " + expected
             case NoSuchFieldError(name, json) => name.capitalize + " can't be blank"
-            case UncategorizedError(key, desc, args) => "Unknown error"
+            case UncategorizedError(key, desc, args) => "%s %s".format(key.capitalize, desc)
         }
         def write(nel: NonEmptyList[JsonScalaz.Error]) = ("errors" -> nel.list.map(errorMsg))
     }

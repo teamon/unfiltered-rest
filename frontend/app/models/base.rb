@@ -54,6 +54,10 @@ module ActiveResource
 end
 
 class Base < ActiveResource::Base
+  include ActiveResource::Validations
+  include ActiveModel::Validations
+  include ActiveModel::Validations::Callbacks
+
   self.site = "http://localhost:8080/"
 end
 
